@@ -19,8 +19,8 @@ clear :- @ clear.
 limit(11,19).
 
 % Define a Snake inicial
-startSnake([[3,4,right],[3,5,right],[3,6,right],[3,7,right]]).
-snake([[3,4,right],[3,5,right],[3,6,right],[3,7,right]]).
+startSnake([[2,4,right],[2,5,right],[2,6,right],[2,7,right]]).
+snake([[2,4,right],[2,5,right],[2,6,right],[2,7,right]]).
 
 % Mensagem de Game Over
 gameOver(['*',' ',' ',' ',' ','GAME OVER',' ',' ',' ',' ',' ','*']).
@@ -51,17 +51,17 @@ food([]).
 % Define os limites das paredes
 wall(0,_).
 wall(_,0).
-% wall(4,9).
-% wall(5,9).
-% wall(6,9).
-% wall(6,12).
-% wall(6,11).
-% wall(6,10).
-% wall(6,8).
-% wall(6,7).
-% wall(6,6).
-% wall(7,9).
-% wall(8,9).
+
+%wall(X,Y) :- 
+%    X = 6,
+%    Y > 3,
+%    Y < 15.
+
+%wall(X,Y) :- 
+%    Y = 9,
+%    X > 2,
+%    X < 10.
+
 wall(X,_) :- limit(X,_).
 wall(_,Y) :- limit(_,Y).
 
