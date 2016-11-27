@@ -80,6 +80,13 @@ head([Head|_],Head).
 tail([_|[]],[]) :- !.
 tail([_|Tail],Tail).
 
+% last/2 - last(List,Elem)
+% Retorna o ultimo elemento de uma lista
+
+last([Head|[]],Head).
+last([_|Tail],Head) :-
+    last(Tail,Head).
+
 % foodMember/3 - foodMember(Food, XPoint, YPoint) 
 % Verifica se um elemento pertence a lista de comidas
 foodMember([[X|[Y|_]]|_],X,Y).
