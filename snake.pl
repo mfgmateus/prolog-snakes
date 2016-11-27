@@ -3,6 +3,7 @@
 :- use_foreign_library(foreign(plOpenGL)).
 :- use_module(library(plGLUT_defs)).
 :- use_module(library(plGLUT)).
+:- use_module(library(by_unix)).
 
 % Definindo predicados que podem ser modificados
 % em runtime
@@ -10,8 +11,9 @@
 
 % Cria função que chama o comando clear do sistema
 % utilizando a biblioteca by_unix
-% clear :- @ clear.
+clear :- @ clear.
 
+limit(11,19).
 
 % Define a Snake inicial
 startSnake([[3,4,right],[3,5,right],[3,6,right],[3,7,right]]).
@@ -31,6 +33,9 @@ direction(119,up).
 direction([[_|[_|[Direction|_]]]|_],Direction).
 direction(head,right).
 
+key(27,esc).
+key(114,restart).
+
 % Define os decrescimentos de acordo com a direção
 decrease(left,0,-1).
 decrease(right,0,1).
@@ -43,8 +48,8 @@ food([]).
 % Define os limites das paredes
 wall(0,_).
 wall(_,0).
-wall(11,_).
-wall(_,19).
+wall(X,_) :- limit(X,_).
+wall(_,Y) :- limit(_,Y).
 
 % Define mudanças de direções permitidas
 
@@ -96,7 +101,10 @@ random(Start,EndH,EndV,X,Y) :-
 % Gera pseudo-randomicos X,Y dados os limites iniciais, horizontais 
 % e verticais que não pertencem ao corpo de uma Snake
 randomFood(Snake,X,Y) :- 
-   	random(1,11,18,X,Y),
+    limit(LimitX,LimitY),
+    LimitX2 is LimitX-1,
+    LimitY2 is LimitY-1,
+   	random(1,LimitX2,LimitY2,X,Y),
     not(snakeMember(Snake,X,Y)), !.
 
 randomFood(Snake,X,Y) :- 
@@ -215,7 +223,8 @@ createLine(Snake,Food,StartList,I,J,List) :-
 % Cria uma Lista de Listas a.k.a Matriz
 createMatrix(_,_,StartList,-1,StartList) :- !.
 createMatrix(Snake,Food,StartList,I,List) :-
-    createLine(Snake,Food,[],I,19,Col),
+    limit(_,LimitY),
+    createLine(Snake,Food,[],I,LimitY,Col),
     Ix is I-1,
     appendList(StartList,Col,NewList),
     createMatrix(Snake,Food,NewList,Ix,List), !.
@@ -301,8 +310,8 @@ game(Snake,Food) :-
     run(Snake,Food,NewSnake,NewFood),
     setFood(NewFood),
     setSnake(NewSnake),
-    write(NewFood),nl,write(NewSnake),nl,
-    createMatrix(NewSnake,NewFood,[],11,List),
+    limit(LimitX,_),
+    createMatrix(NewSnake,NewFood,[],LimitX,List),
     print(List).
     
 % Iniciando o predicado food/1 na execução
@@ -320,19 +329,22 @@ display.
 % idle/0 - idle
 % Regra que será chamada a cada iteração do programa
 idle :- 
+    clear,
     snake(Snake),food(Food),
     game(Snake,Food),
     sleep(0.2).
 % keyboard/3 - keyboard(Asccii,X,Y)
 % Mapeia os digitos do teclado para alguma ação
 
-% Digito 27 representa e tecla Esc e finaliza a janela
+% tecla Esc finaliza a janela
 % consequentemente finalizando o programa
-keyboard(27,_,_) :-
+keyboard(Key,_,_) :-
+    key(Key,esc),
     glutDestroyWindow, !.
 
-% Digito 114 representa a tecla R
-keyboard(114,_,_) :-
+% Reseta o jogo
+keyboard(Key,_,_) :-
+    key(Key,restart),
     resetFood,
     startSnake(Snake),
     setSnake(Snake),
@@ -342,7 +354,6 @@ keyboard(114,_,_) :-
 % uma tecla de ação (up,left,down,right), verifica se a
 % mudança é permitida e seta a direção
 keyboard(X,_,_) :-
-    write(X),nl,
     direction(X,Direction),
 	snake(Snake),
 	snakeHead(Snake,LastDirection),
