@@ -33,7 +33,11 @@ direction(97,left).
 direction(100,right).
 direction(115,down).
 direction(119,up).
+
+% Retorna a direção do ultimo elemento da Snake
 direction([[_|[_|[Direction|_]]]|_],Direction).
+
+% Retorna a direção que deve ser tomada pela snake
 direction(head,right).
 
 key(27,esc).
@@ -309,11 +313,13 @@ runSnake(Snake,Food,Snake,Food).
 
 % Retorna Listas vazias caso a Snake tenha colidido na parede
 run(Snake,_,[],[]) :-
-    colideWall(Snake),!.
+    colideWall(Snake),
+    fade,!.
 
 % Retorna Listas vazias caso a Snake tenha colidido em si mesma
 run(Snake,_,[],[]) :-
-    colideSnake(Snake,Snake),!.
+    colideSnake(Snake,Snake),
+    fade,  !.
 
 run(Snake,Food,NewSnake,NewFood) :-
     runFood(Snake,Food,TempFood),
@@ -406,3 +412,20 @@ main :-
     glutIdleFunc(idle),
     glutDisplayFunc,
     glutMainLoop.
+
+fade(_,0) :- !.
+
+fade(List,Times) :-
+    print(List),
+    sleep(0.5),
+    shell(clear),
+    sleep(0.5),
+    T2 is Times-1,
+    fade(List,T2).
+
+fade :-
+    snake(Snake),
+    food(Food),
+    limit(LimitX,_),
+    createMatrix(Snake,Food,[],LimitX,List),
+    fade(List,3).
