@@ -51,6 +51,17 @@ food([]).
 % Define os limites das paredes
 wall(0,_).
 wall(_,0).
+% wall(4,9).
+% wall(5,9).
+% wall(6,9).
+% wall(6,12).
+% wall(6,11).
+% wall(6,10).
+% wall(6,8).
+% wall(6,7).
+% wall(6,6).
+% wall(7,9).
+% wall(8,9).
 wall(X,_) :- limit(X,_).
 wall(_,Y) :- limit(_,Y).
 
@@ -115,7 +126,8 @@ randomFood(Snake,X,Y) :-
     LimitX2 is LimitX-1,
     LimitY2 is LimitY-1,
    	random(1,LimitX2,LimitY2,X,Y),
-    not(snakeMember(Snake,X,Y)), !.
+    not(snakeMember(Snake,X,Y)), 
+    not(wall(X,Y)).
 
 randomFood(Snake,X,Y) :- 
     randomFood(Snake,X,Y).
