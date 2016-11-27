@@ -3,6 +3,7 @@
 :- use_foreign_library(foreign(plOpenGL)).
 :- use_module(library(plGLUT_defs)).
 :- use_module(library(plGLUT)).
+% Importando biblioteca by_unix para dar um clear na tela
 :- use_module(library(by_unix)).
 
 % Definindo predicados que podem ser modificados
@@ -13,6 +14,8 @@
 % utilizando a biblioteca by_unix
 clear :- @ clear.
 
+% limit/2 - limit(LimitX,LimitY)
+% Define os limites das paredes
 limit(11,19).
 
 % Define a Snake inicial
@@ -183,15 +186,27 @@ getSymbol(_,_,X,Y,Symbol) :-
     wall(X,Y),
     Symbol = '*', !.
 
+% Retorna símbolo o caso X,Y pertença a lista de comidas
+% e da Snake
+getSymbol(Snake,Food,X,Y,Symbol) :-
+    foodMember(Food,X,Y),
+    snakeMember(Snake,X,Y),
+    Symbol = 'o', !.
+
 % Retorna símbolo + caso X,Y pertença a lista de comidas
 getSymbol(_,Food,X,Y,Symbol) :-
     foodMember(Food,X,Y),
     Symbol = '+', !.
 
-% Retorna símbolo 'o' caso X,Y pertença a snake
+% Retorna símbolo 'º' caso X,Y pertença a cabeça snake
+getSymbol(Snake,_,X,Y,Symbol) :-
+    snakeHead(Snake,X,Y),
+    Symbol = 'º', !.
+
+% Retorna símbolo '°' caso X,Y pertença a snake
 getSymbol(Snake,_,X,Y,Symbol) :-
     snakeMember(Snake,X,Y),
-    Symbol = 'o', !.
+    Symbol = '°', !.
 
 % Retorna ' ' caso nenhum simbolo seja encontrado
 getSymbol(_,_,_,_,' ').
