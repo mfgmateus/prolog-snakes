@@ -413,6 +413,8 @@ main :-
     glutDisplayFunc,
     glutMainLoop.
 
+% fade/2 - fade(List,NTimes)
+% Gera fade do jogo na tela
 fade(_,0) :- !.
 
 fade(List,Times) :-
@@ -423,6 +425,8 @@ fade(List,Times) :-
     T2 is Times-1,
     fade(List,T2).
 
+% fade/0 - fade
+% Cria a lista do jogo e chama o fade 3 vezes
 fade :-
     snake(Snake),
     food(Food),
